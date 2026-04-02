@@ -1,0 +1,47 @@
+# ── Python ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.tox/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.coverage
+htmlcov/
+.env
+*.db
+uploads/
+
+# ── Node / React ─────────────────────────────────────────────
+node_modules/
+frontend/build/
+frontend/.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+
+# ── Docker ───────────────────────────────────────────────────
+.dockerignore
+
+# ── OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Misc ─────────────────────────────────────────────────────
+*.log
+tmp/
