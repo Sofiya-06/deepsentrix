@@ -1,4 +1,4 @@
-# Deepsentrix
+# deepsentrix
 
 AI-powered deepfake detection and pixel protection platform.
 
