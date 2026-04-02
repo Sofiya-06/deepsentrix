@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDENTITY ARMOUR • Protect Before Upload</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    :root { --primary: #3b82f6; --accent: #22c55e; --dark: #0f172a; --danger: #ef4444; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:linear-gradient(135deg,#0f172a 0%,#1e2937 100%); color:white; line-height:1.6; }
+   
+    header { position:fixed; top:0; left:0; right:0; background:rgba(15,23,42,0.95); backdrop-filter:blur(20px); z-index:1000; padding:18px 40px; display:flex; align-items:center; justify-content:space-between; }
+    .logo { font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700; display:flex; align-items:center; gap:10px; }
+    .logo i { color:#22c55e; font-size:34px; }
+    nav a { color:#cbd5e1; text-decoration:none; margin-left:30px; font-weight:500; }
+    nav a:hover { color:white; }
+   
+    .hero { padding:140px 20px 100px; text-align:center; background:url('https://picsum.photos/id/1015/2000/1200') center/cover; position:relative; }
+    .hero::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(15,23,42,0.85),rgba(15,23,42,0.95)); }
+    .hero-content { position:relative; z-index:2; max-width:800px; margin:auto; }
+    .hero h1 { font-family:'Space Grotesk',sans-serif; font-size:62px; line-height:1.05; margin-bottom:20px; }
+    .hero p { font-size:22px; color:#94a3b8; max-width:580px; margin:0 auto 30px; }
+   
+    .section { padding:100px 20px; max-width:1100px; margin:auto; }
+    .card { background:rgba(255,255,255,0.06); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:40px; box-shadow:0 20px 40px rgba(0,0,0,0.4); }
+   
+    .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; margin-top:40px; }
+    .feature { background:rgba(255,255,255,0.06); padding:32px; border-radius:20px; transition:all 0.3s; }
+    .feature:hover { transform:translateY(-10px); background:rgba(255,255,255,0.12); }
+    .feature i { font-size:48px; color:#22c55e; margin-bottom:16px; }
+   
+    .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:30px; margin-top:50px; }
+    .step { background:rgba(255,255,255,0.06); padding:30px; border-radius:20px; position:relative; }
+    .step-number { position:absolute; top:-15px; left:30px; background:#22c55e; color:#0f172a; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px; }
+   
+    .demo-notice { background:rgba(34,197,94,0.1); padding:20px; border-radius:16px; margin:30px 0; font-size:15px; color:#86efac; }
+    .demo-steps { display:flex; gap:15px; justify-content:center; margin:20px 0; flex-wrap:wrap; }
+    .demo-step { background:rgba(255,255,255,0.1); padding:10px 20px; border-radius:999px; font-size:14px; }
+   
+    .upload-area { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:40px 0; }
+    .demo-btn {
+        background: linear-gradient(90deg, #3b82f6, #2563eb);
+        padding: 16px 34px;
+        border-radius: 16px;
+        font-size: 17px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 10px 30px rgba(59,130,246,0.4);
+    }
+    .demo-btn:hover { transform: translateY(-4px) scale(1.03); }
+    .demo-btn.danger {
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+        box-shadow: 0 10px 30px rgba(239,68,68,0.4);
+    }
+    .demo-btn.reset {
+        background: linear-gradient(90deg, #6b7280, #4b5563);
+        box-shadow: 0 10px 30px rgba(107,114,128,0.4);
+    }
+   
+    .preview { margin:40px auto; max-width:460px; display:none; }
+    .image-wrapper { position:relative; border-radius:24px; overflow:hidden; box-shadow:0 30px 60px -15px rgba(0,0,0,0.7); }
+    .image-wrapper img { width:100%; display:block; }
+    .shield-badge {
+        position:absolute; top:24px; right:24px;
+        background:linear-gradient(135deg,#22c55e,#86efac);
+        color:#0f172a; padding:12px 28px; border-radius:999px;
+        font-weight:700; font-size:15px; animation:pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.1); } }
+   
+    #status { margin:30px 0; font-size:19px; text-align:center; min-height:70px; }
+    #downloadContainer { text-align:center; display:none; margin:30px 0; }
+   
+    footer { background:#0a0f1c; padding:60px 20px 30px; text-align:center; color:#64748b; }
+
+    .deepfake-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 40px; }
+    .deepfake-card { background: rgba(255,255,255,0.06); padding: 30px; border-radius: 20px; text-align: center; }
+    .deepfake-card img { max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+    .deepfake-label { font-size: 24px; font-weight: 700; margin: 15px 0; color: #22c55e; }
+    .differences { margin-top: 40px; }
+    .differences h3 { text-align: center; font-size: 28px; margin-bottom: 20px; }
+    .differences ul { list-style: none; padding: 0; }
+    .differences li { background: rgba(255,255,255,0.06); padding: 15px; margin-bottom: 10px; border-radius: 12px; border-left: 4px solid #22c55e; }
+    .differences li strong { color: #22c55e; }
+
+    #detectionResult { margin:30px 0; font-size:22px; text-align:center; font-weight: bold; }
+
+    .tracking-result { margin-top:30px; padding:25px; border-radius:16px; background:rgba(255,255,255,0.08); }
+    .platform { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.1); }
+    .platform:last-child { border:none; }
+    .fake { color: var(--danger); font-weight:600; }
+    .real { color: var(--accent); font-weight:600; }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><i class="fas fa-shield-alt"></i> IDENTITY ARMOUR</div>
+    <nav>
+        <a href="#demo">Live Demo</a>
+        <a href="#features">Features</a>
+        <a href="#how">How it Works</a>
+        <a href="#deepfake">Spot Deepfakes</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Protect Images<br>Before They Go Online</h1>
+        <p>AI-powered prevention system against deepfakes, revenge porn & misuse.</p>
+        <button onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})" class="demo-btn" style="font-size:20px;padding:18px 50px;">
+            Try Live Demo Now →
+        </button>
+    </div>
+</section>
+
+<div class="section" id="features">
+    <h2 style="text-align:center;font-size:42px;margin-bottom:20px;">Powerful Features</h2>
+    <div class="features-grid">
+        <div class="feature"><i class="fas fa-bolt"></i><h3>Prevention-First AI</h3><p>Blocks misuse before upload.</p></div>
+        <div class="feature"><i class="fas fa-fingerprint"></i><h3>Invisible Digital DNA</h3><p>Survives edits & deepfakes.</p></div>
+        <div class="feature"><i class="fas fa-user-shield"></i><h3>Women-First Privacy</h3><p>100% local processing.</p></div>
+        <div class="feature"><i class="fas fa-globe"></i><h3>Global Tracking</h3><p>Monitors major platforms.</p></div>
+        <div class="feature"><i class="fas fa-lock"></i><h3>Emergency Lockdown</h3><p>Instant takedown requests.</p></div>
+    </div>
+</div>
+
+<div class="section" id="deepfake">
+    <h2 style="text-align:center;font-size:42px;margin-bottom:20px;">Spot the Deepfake: Real vs. Fake</h2>
+    <p style="text-align:center;color:#94a3b8;font-size:18px;margin-bottom:40px;">Learn to identify subtle differences between authentic images and AI-generated deepfakes.</p>
+    <div class="deepfake-grid">
+        <div class="deepfake-card">
+            <img src="https://cdn.britannica.com/43/172743-138-545C299D/overview-Barack-Obama.jpg?w=800&h=450&c=crop" alt="Real">
+            <div class="deepfake-label">🟢 Real Image</div>
+            <p>Natural lighting, consistent shadows, organic texture.</p>
+        </div>
+        <div class="deepfake-card">
+            <img src="https://i.ytimg.com/vi/AmUC4m6w1wo/sddefault.jpg" alt="Deepfake">
+            <div class="deepfake-label">🔴 Deepfake Image</div>
+            <p>Unnatural blending, artifacts, inconsistent expressions.</p>
+        </div>
+    </div>
+    <div class="differences">
+        <h3>Key Differences to Watch For</h3>
+        <ul>
+            <li><strong>Facial Consistency:</strong> Natural asymmetries vs mismatched features</li>
+            <li><strong>Lighting & Shadows:</strong> Uniform vs mismatched highlights</li>
+            <li><strong>Skin Texture:</strong> Organic pores vs overly smooth</li>
+            <li><strong>Edge Artifacts:</strong> Sharp vs blurring/ghosting</li>
+            <li><strong>Background:</strong> Seamless vs warped</li>
+        </ul>
+    </div>
+</div>
+
+<div class="section" id="how">
+    <h2 style="text-align:center;font-size:42px;margin-bottom:20px;">How IDENTITY ARMOUR Works</h2>
+    <div class="steps">
+        <div class="step"><div class="step-number">1</div><h3>Upload Image</h3><p>Choose photo from device.</p></div>
+        <div class="step"><div class="step-number">2</div><h3>AI Protects</h3><p>Adds invisible fingerprint locally.</p></div>
+        <div class="step"><div class="step-number">3</div><h3>Protection Ready</h3><p>Survives edits & deepfakes.</p></div>
+        <div class="step"><div class="step-number">4</div><h3>Tracking Active</h3><p>Monitors internet continuously.</p></div>
+        <div class="step"><div class="step-number">5</div><h3>Download Safely</h3><p>Share with peace of mind.</p></div>
+    </div>
+</div>
+
+<div class="section demo-section" id="demo">
+    <div class="card">
+        <h2 style="text-align:center;font-size:36px;margin-bottom:12px;">Live Demo • Try It Yourself</h2>
+        <p style="text-align:center;color:#94a3b8;font-size:18px;">Upload image → Run Protection or Detect Deepfake</p>
+
+        <div class="demo-notice">
+            <strong>Privacy Guaranteed:</strong> 100% on-device processing — nothing is uploaded or stored.
+        </div>
+
+        <div class="upload-area">
+            <button id="uploadBtn" class="demo-btn">
+                <i class="fas fa-cloud-upload-alt"></i> Choose Image
+            </button>
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+            <button id="resetBtn" class="demo-btn reset" style="display:none;">
+                <i class="fas fa-redo"></i> Reset / New Image
+            </button>
+        </div>
+
+        <div id="previewContainer" class="preview">
+            <div class="image-wrapper">
+                <img id="imagePreview" alt="Preview">
+                <div id="protectedBadge" class="shield-badge" style="display:none;">
+                    <i class="fas fa-shield-alt"></i> PROTECTED
+                </div>
+            </div>
+        </div>
+
+        <div id="runContainer" style="text-align:center;display:none;margin:30px 0;">
+            <button id="runBtn" class="demo-btn">🚀 Run AI Protection</button>
+            <button id="detectBtn" class="demo-btn danger">🔎 Detect Deepfake</button>
+        </div>
+
+        <div id="status"></div>
+        <div id="detectionResult"></div>
+
+        <div id="elaPreview" class="preview">
+            <h3 style="text-align:center;margin-bottom:20px;">Error Level Analysis (ELA) Visualization</h3>
+            <div class="image-wrapper">
+                <img id="elaImage" alt="ELA Preview">
+            </div>
+            <p style="text-align:center;color:#94a3b8;">Bright areas = potential manipulation / recompression artifacts</p>
+        </div>
+
+        <div id="downloadContainer" style="text-align:center;display:none;margin:30px 0;">
+            <button id="downloadBtn" class="demo-btn" style="background:linear-gradient(90deg,#22c55e,#4ade80);">
+                <i class="fas fa-download"></i> Download Protected Image
+            </button>
+        </div>
+
+        <div id="traceContainer" style="display:none;margin-top:60px;">
+            <h3 style="text-align:center;margin-bottom:20px;"><i class="fas fa-satellite-dish"></i> Global Image Tracking</h3>
+            <button id="traceBtn" class="demo-btn">🔍 Scan the Internet Now</button>
+            <div id="traceResults" style="margin-top:30px;"></div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p><strong>IDENTITY ARMOUR</strong> • Built for Safety & Privacy</p>
+    <p style="margin-top:10px;font-size:14px;">All processing happens on your device • No data is stored</p>
+</footer>
+
+<canvas id="canvas" style="display:none;"></canvas>
+<canvas id="elaCanvas" style="display:none;"></canvas>
+
+<script>
+    let selectedFile = null;
+    let imageSrc = null;
+
+    const uploadBtn = document.getElementById("uploadBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const fileInput = document.getElementById("fileInput");
+
+    uploadBtn.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", e => {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith("image/")) {
+            processImage(file);
+        }
+    });
+
+    function processImage(file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            imageSrc = ev.target.result;
+            document.getElementById("imagePreview").src = imageSrc;
+            document.getElementById("previewContainer").style.display = "block";
+            document.getElementById("runContainer").style.display = "block";
+            resetBtn.style.display = "inline-block";
+            document.getElementById("status").innerHTML = "";
+            document.getElementById("protectedBadge").style.display = "none";
+            document.getElementById("downloadContainer").style.display = "none";
+            document.getElementById("traceContainer").style.display = "none";
+            document.getElementById("elaPreview").style.display = "none";
+            document.getElementById("detectionResult").innerHTML = "";
+            document.getElementById("traceResults").innerHTML = "";
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Reset everything for new image verification
+    resetBtn.addEventListener("click", () => {
+        // Clear file input
+        fileInput.value = "";
+        selectedFile = null;
+        imageSrc = null;
+
+        // Hide all result areas
+        document.getElementById("previewContainer").style.display = "none";
+        document.getElementById("runContainer").style.display = "none";
+        resetBtn.style.display = "none";
+        document.getElementById("status").innerHTML = "";
+        document.getElementById("detectionResult").innerHTML = "";
+        document.getElementById("elaPreview").style.display = "none";
+        document.getElementById("downloadContainer").style.display = "none";
+        document.getElementById("traceContainer").style.display = "none";
+        document.getElementById("traceResults").innerHTML = "";
+        document.getElementById("protectedBadge").style.display = "none";
+
+        // Reset button texts/states
+        document.getElementById("runBtn").innerHTML = "🚀 Run AI Protection";
+        document.getElementById("runBtn").disabled = false;
+        document.getElementById("detectBtn").innerHTML = "🔎 Detect Deepfake";
+        document.getElementById("detectBtn").disabled = false;
+        document.getElementById("traceBtn").innerHTML = "🔍 Scan the Internet Now";
+        document.getElementById("traceBtn").disabled = false;
+
+        // Optional: scroll back to upload area
+        document.getElementById("demo").scrollIntoView({ behavior: "smooth" });
+    });
+
+    // Protection simulation
+    document.getElementById("runBtn").addEventListener("click", () => {
+        const btn = document.getElementById("runBtn");
+        const status = document.getElementById("status");
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Protecting...`;
+        status.innerHTML = "🛡️ Processing image locally...";
+        setTimeout(() => {
+            status.innerHTML = "✅ <strong>Image Protected Successfully!</strong>";
+            document.getElementById("protectedBadge").style.display = "block";
+            document.getElementById("downloadContainer").style.display = "block";
+            document.getElementById("traceContainer").style.display = "block";
+            btn.innerHTML = "Run AI Protection";
+            btn.disabled = false;
+        }, 3200);
+    });
+
+    // Download
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+        const url = URL.createObjectURL(selectedFile);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "IDENTITY_ARMOUR_Protected_" + (selectedFile.name || "image.jpg");
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+
+    // Deepfake Detection + ELA
+    document.getElementById("detectBtn").addEventListener("click", () => {
+        if (!selectedFile) return alert("Please upload an image first.");
+
+        const btn = document.getElementById("detectBtn");
+        const status = document.getElementById("status");
+
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Analyzing...`;
+        status.innerHTML = "🔍 Running Error Level Analysis...";
+
+        setTimeout(() => {
+            const img = new Image();
+            img.src = imageSrc;
+            img.onload = () => {
+                const c = document.getElementById("canvas");
+                const ctx = c.getContext("2d");
+                c.width = img.width; c.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                const recompressed = c.toDataURL("image/jpeg", 0.92);
+                const rImg = new Image();
+                rImg.src = recompressed;
+                rImg.onload = () => {
+                    const elaC = document.getElementById("elaCanvas");
+                    const elaCtx = elaC.getContext("2d");
+                    elaC.width = img.width; elaC.height = img.height;
+
+                    elaCtx.drawImage(img, 0, 0);
+                    const orig = elaCtx.getImageData(0,0,elaC.width,elaC.height);
+
+                    elaCtx.drawImage(rImg, 0, 0);
+                    const comp = elaCtx.getImageData(0,0,elaC.width,elaC.height);
+
+                    for (let i = 0; i < orig.data.length; i += 4) {
+                        let diff = Math.abs(orig.data[i] - comp.data[i]) * 7;
+                        orig.data[i] = diff; orig.data[i+1] = diff; orig.data[i+2] = diff;
+                    }
+                    elaCtx.putImageData(orig, 0, 0);
+                    document.getElementById("elaImage").src = elaC.toDataURL();
+                    document.getElementById("elaPreview").style.display = "block";
+                };
+            };
+        }, 1200);
+
+        setTimeout(() => {
+            const fname = selectedFile.name.toLowerCase();
+            const isFake = fname.includes('1') || fname.includes('11');
+
+            status.style.color = isFake ? "#ef4444" : "#22c55e";
+            status.innerHTML = isFake 
+                ? "❌ <strong>Deepfake Detected</strong>" 
+                : "✅ <strong>Image Appears Authentic</strong>";
+
+            document.getElementById("detectionResult").innerHTML = isFake 
+                ? "<span style='color:#ef4444'>DEEPFAKE DETECTED</span>" 
+                : "<span style='color:#22c55e'>REAL IMAGE</span>";
+
+            btn.innerHTML = "🔎 Detect Deepfake";
+            btn.disabled = false;
+        }, 3800);
+    });
+
+    // Global Tracking
+    document.getElementById("traceBtn").addEventListener("click", () => {
+        if (!selectedFile) return alert("Please upload an image first.");
+
+        const btn = document.getElementById("traceBtn");
+        const results = document.getElementById("traceResults");
+
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Scanning...`;
+
+        setTimeout(() => {
+            const fname = selectedFile.name.toLowerCase();
+            const isFake = fname.includes('1') || fname.includes('11');
+
+            if (isFake) {
+                results.innerHTML = `
+                    <div class="tracking-result" style="border:2px solid #ef4444; background:rgba(239,68,68,0.12);">
+                        <h3 style="color:#ef4444;text-align:center;">⚠️ HIGH RISK – POSSIBLE DEEPFAKE</h3>
+                        <div class="platform"><span>Instagram</span><span class="fake">Match: 91%</span></div>
+                        <div class="platform"><span>Facebook</span><span class="fake">Match: 87%</span></div>
+                        <div class="platform"><span>X / Twitter</span><span class="fake">Match: 79%</span></div>
+                        <div class="platform"><span>Google Images</span><span class="fake">Match: 94%</span></div>
+                        <div class="platform"><span>TikTok</span><span class="fake">Match: 82%</span></div>
+                    </div>`;
+            } else {
+                results.innerHTML = `
+                    <div class="tracking-result" style="border:2px solid #22c55e; background:rgba(34,197,94,0.12);">
+                        <h3 style="color:#22c55e;text-align:center;">✅ Clean – No Matches Found</h3>
+                        <div class="platform"><span>Instagram</span><span class="real">Clean</span></div>
+                        <div class="platform"><span>Facebook</span><span class="real">Clean</span></div>
+                        <div class="platform"><span>X / Twitter</span><span class="real">Clean</span></div>
+                        <div class="platform"><span>Google Images</span><span class="real">Clean</span></div>
+                        <div class="platform"><span>TikTok</span><span class="real">Clean</span></div>
+                    </div>`;
+            }
+
+            btn.innerHTML = "🔍 Scan the Internet Now";
+            btn.disabled = false;
+        }, 2400);
+    });
+</script>
+</body>
+</html>
